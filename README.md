@@ -2,6 +2,8 @@
 
 This directory contains code associated with the ACL 2020 short paper ["Learning to understand child directed and adult directed speech"](https://www.aclweb.org/anthology/2020.acl-main.1/).
 
+July 5th 2020: Code is released but in need of cleaning; in particular regarding file paths. It is released now, so that interested ACL 2020 attendees can inspect it. A clean and more complete repository will be up by the end of this week.
+
 ## Data
 
 The data used is from the [NewmanRatner corpus](https://childes.talkbank.org/access/Eng-NA/NewmanRatner.html) which is available through Childes.
