@@ -4,8 +4,7 @@ This directory contains code associated with the ACL 2020 short paper ["Learning
 
 ## Data
 
-The data used is from the [NewmanRatner corpus](https://childes.talkbank.org/access/Eng-NA/NewmanRatner.html) which is available through Childes. The code in /data
-does preprocessing.
+The data used is from the [NewmanRatner corpus](https://childes.talkbank.org/access/Eng-NA/NewmanRatner.html) which is available through Childes.
 
 ## Semantic embeddings
 
