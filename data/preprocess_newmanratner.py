@@ -23,14 +23,14 @@ def corpus_parser(path, folder, file):
             for c in word.find_all():
                 c.decompose()
             speaker.append(who)
-            sentence.append(word.get_text()) # check this for morphological weirdness tags
+            sentence.append(word.get_text())
         if utterance.find("media"):
             item["end"] = float(utterance.find("media")["end"])
             item["start"] = float(utterance.find("media")["start"])
             identifier = folder + "_" + item["file"] + "_" + str(n)
             item["sentence"] = sentence
             item["speaker"] = set(speaker)
-            # only include item in data if it only contains speech by MOT
+            # only include item in data if it only contains speech by MOT (= mother)
             if item["speaker"] == {"MOT"}:
                 # only include if segment is at least 50 ms
                 # take out the speaker annotation, it's unnecessary
@@ -48,7 +48,7 @@ def store_wavs(data, path, split, folder, file):
     for utterance in data:
         if "start" in data[utterance]:
             segment = audio[int(data[utterance]["start"]*1000):int((data[utterance]["end"]*1000)+1)]
-            segment.export("/roaming/u1270964/cds/data/NewmanRatner/audio/{}/{}.wav".format(split, str(utterance)),
+            segment.export("NewmanRatner/audio/{}/{}.wav".format(split, str(utterance)),
                         format="wav")
         else:
             print("no wav stored:", utterance, data[utterance])
@@ -68,8 +68,8 @@ folders = ["07", "10", "11", "18", "24"]
 
 ########################################################
 # ADS
-ADS_path = "/roaming/u1270964/NewmanRatner/transcripts/Interviews/"
-ADS_audio_path = "/roaming/u1270964/NewmanRatner/audio/Interviews/"
+ADS_path = "NewmanRatner/transcripts/Interviews/"
+ADS_audio_path = "NewmanRatner/audio/Interviews/"
 ADS_data = {}
 
 for folder in folders:
@@ -83,12 +83,12 @@ for folder in folders:
         # add to data dctionary
         ADS_data.update(data)
 
-with open("/roaming/u1270964/cds/data/NewmanRatner/ADS.json", "w") as f:
+with open("NewmanRatner/ADS.json", "w") as f:
     json.dump(ADS_data, f)
 
 # CDS
-CDS_path = "/roaming/u1270964/NewmanRatner/transcripts/"
-CDS_audio_path = "/roaming/u1270964/NewmanRatner/audio/0wav/"
+CDS_path = "NewmanRatner/transcripts/"
+CDS_audio_path = "NewmanRatner/audio/0wav/"
 CDS_data = {}
 
 for folder in folders:
@@ -99,11 +99,10 @@ for folder in folders:
         audiofile = file[:-4]+".wav"
         try:
             store_wavs(data, CDS_audio_path, "CDS", folder, audiofile)
-
-            #    add to data dctionary
+            # add to data dictionary
             CDS_data.update(data)
         except:
             print("warning: no file {}".format(audiofile))
 
-with open("/roaming/u1270964/cds/data/NewmanRatner/CDS.json", "w") as f:
+with open("NewmanRatner/CDS.json", "w") as f:
     json.dump(CDS_data, f)

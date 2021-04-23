@@ -18,7 +18,7 @@ def clean_sentence(sentence):
 def speak(sentence, client, encoding, speaker="random"):
     # make a clean string without nderscores
     text = clean_sentence(sentence)
-    # select voice (use wavenet voices as they are so muh better)
+    # select voice (use wavenet voices)
     if speaker == "random":
         # these are all en-US WaveNet voices available in the API (Nov 5 2019)
         # A, B and D are 'male', 'C', 'E' and 'F' are 'female'
@@ -26,7 +26,7 @@ def speak(sentence, client, encoding, speaker="random"):
                   "en-US-Wavenet-D", "en-US-Wavenet-E", "en-US-Wavenet-F"]
         speaker = random.choice(voices)
     voice = texttospeech.types.VoiceSelectionParams(name=speaker, language_code='en-US')
-    # Select the type of audio file you want returned - using LINEAR16 for now
+    # Select the type of audio file you want returned - using LINEAR16
     audio_config = texttospeech.types.AudioConfig(audio_encoding=encoding)
     # Set the text input to be synthesized
     synthesis_input = texttospeech.types.SynthesisInput(text=text)
@@ -54,7 +54,7 @@ failed = {"ADS" : [], "CDS" : []}
 
 # open ADS json
 # speak every sentence and store the speech as a wav
-ADS = json.load(open('ADS.json'))
+ADS = json.load(open('NewmanRatner/ADS.json'))
 for utterance in ADS:
     wav = str(utterance) + '.wav'
     response = speak(ADS[utterance]['sentence'], client, encoding)
@@ -66,7 +66,7 @@ for utterance in ADS:
         print("Failed to process ADS {}".format(utterance), flush=True)
 
 # open CDS json
-CDS = json.load(open('CDS.json'))
+CDS = json.load(open('NewmanRatner/CDS.json'))
 for utterance in CDS:
     wav = str(utterance) + '.wav'
     response = speak(CDS[utterance]['sentence'], client, encoding)
