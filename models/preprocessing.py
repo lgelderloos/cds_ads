@@ -22,16 +22,16 @@ def prepare_features(dataset, semantic_features):
 
 def newmanratner_features(bertversion, dataset):
     # prepare natural speech
-    config = dict(audio=dict(dir='/roaming/u1270964/cds/data/NewmanRatner/audio/',
+    config = dict(audio=dict(dir='../data/NewmanRatner/audio/',
                              dataset=dataset, type='mfcc', delta=True, alpha=0.97,
                              n_filters=40, window_size=0.025, frame_shift=0.010),
-                  bert=dict(dir="/roaming/u1270964/cds/data/NewmanRatner/", version=bertversion))
+                  bert=dict(dir="../data/NewmanRatner/", version=bertversion))
     newman_audio_features(config["audio"])
     # prepare synthetic speech
-    config = dict(audio=dict(dir='/roaming/u1270964/cds/data/NewmanRatner/synthetic_speech/',
+    config = dict(audio=dict(dir='../data/NewmanRatner/synthetic_speech/',
                              dataset=dataset, type='mfcc', delta=True, alpha=0.97,
                              n_filters=40, window_size=0.025, frame_shift=0.010),
-                  bert=dict(dir="/roaming/u1270964/cds/data/NewmanRatner/", version=bertversion))
+                  bert=dict(dir="../data/NewmanRatner/", version=bertversion))
     newman_audio_features(config["audio"])
     # prepare semantic embeddings
     bert_features(dataset, config["bert"])
@@ -41,8 +41,8 @@ def newman_audio_features(config):
     files = os.listdir(directory)
     paths = [ directory + file for file in files ]
     files, features = audio_features(paths, config)
-    torch.save(dict(features=features, filenames=files), config['dir'] + 'test_{}_mfcc_features.pt'.format(config['dataset']))
-
+    torch.save(dict(features=features, filenames=files), config['dir'] + '{}_mfcc_features.pt'.format(config['dataset']))
+"""
 def flickr8k_features():
     config = dict(audio=dict(dir='/roaming/gchrupal/datasets/flickr8k/', type='mfcc', delta=True, alpha=0.97, n_filters=40, window_size=0.025, frame_shift=0.010),
                   image=dict(dir='/roaming/gchrupal/datasets/flickr8k/', model='resnet'))
@@ -87,8 +87,6 @@ def image_features(paths, config):
 
     return torch.stack([one(path) for path in paths])
 
-
-
 def prep_tencrop(im, model, device):
     # Adapted from: https://github.com/gchrupala/speech2image/blob/master/preprocessing/visual_features.py#L60
 
@@ -108,6 +106,8 @@ def prep_tencrop(im, model, device):
         im = im.expand(im.size()[0], 3, im.size()[2], im.size()[3])
     activations = model(im)
     return activations.mean(0).squeeze()
+
+"""
 
 def fix_wav(path):
     import wave
@@ -139,15 +139,13 @@ def clean_sentence(sentence):
             clean_sentence.extend(word.split("_"))
         else:
             clean_sentence.append(word)
-    # return as strng rather than as wordlist
-    return "_".join(clean_sentence)
+    # return as string rather than as wordlist
+    return " ".join(clean_sentence) # FIXMEthis should not be an underscore ##fixed
 
 def bert_features(dataset, config):
-    #dict(version=bertversion, feattype="sentemb"))
     if config["version"] == "sbert":
         from sentence_transformers import SentenceTransformer
         bertmodel = SentenceTransformer('bert-base-nli-stsb-mean-tokens')
-
         with open(config["dir"]+"{}.json".format(dataset), "r") as f:
             data = json.load(f)
         ids = list(data.keys())
@@ -159,7 +157,7 @@ def bert_features(dataset, config):
         print("encoding BERT sentences")
 
         sentembs = bertmodel.encode(plain_sents)
-        torch.save(dict(features=sentembs, filenames=ids), config['dir'] + '{}/bert_features.pt'.format(dataset))
+        torch.save(dict(features=sentembs, filenames=ids), config['dir'] + '{}_bert_features.pt'.format(dataset))
     else:
         raise NotImplementedError("unknown bert version: {}".format(config["version"]))
 
@@ -175,10 +173,10 @@ def audio_features(paths, config):
     t = len(paths)
 
 
-    # this is temporary: only extracting mfccs for files for hwich you didnt have them yet!
-    existing_mfccs = torch.load(config['dir'] + '{}_mfcc_features.pt'.format(config['dataset']))
-    files = existing_mfccs['filenames']
-    output = existing_mfccs['features']
+    # only extracting mfccs for files for which you don't have them yet
+    #existing_mfccs = torch.load(config['dir'] + '{}_mfcc_features.pt'.format(config['dataset']))
+    #files = existing_mfccs['filenames']
+    #output = existing_mfccs['features']
     ####
     for cap in paths:
         n += 1
@@ -208,9 +206,9 @@ def audio_features(paths, config):
                 features = numpy.concatenate([energy[:,None], features], 1)
                 # optionally add the deltas and double deltas
                 if config['delta']:
-                    single_delta= delta (features, 2)
-                    double_delta= delta(single_delta, 2)
-                    features= numpy.concatenate([features, single_delta, double_delta], 1)
+                    single_delta = delta(features, 2)
+                    double_delta = delta(single_delta, 2)
+                    features = numpy.concatenate([features, single_delta, double_delta], 1)
                 output.append(torch.tensor(features))
                 files.append(cap.split("/")[-1])
                 print("{}/{} succesfully processed {}".format(t, n, cap), flush=True)

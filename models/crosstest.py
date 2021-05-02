@@ -38,7 +38,7 @@ def multi_cross_test(dataset, variants, seeds):
     return scores
 
 variants = ["ADS", "CDS"]
-seeds = ['123', '234', '345']
+seeds = ['123', '234', '345'] # insert here the seeds you used
 
 for variant in variants:
     print("Testing on {}".format(variant), flush = True)
@@ -46,4 +46,3 @@ for variant in variants:
     data = D.NewmanRatner_loader(split='test', register=variant, batch_size=16, shuffle=False)
     scores = multi_cross_test(data, variants, seeds)
     json.dump(scores, open("crosstest_results/{}.json".format(variant),"w"))
-
