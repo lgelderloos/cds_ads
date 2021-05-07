@@ -1,0 +1,16 @@
+models/ads/results/
+models/ads/models/
+models/cds/results/
+models/cds/models/
+models/ads_synth/results/
+models/ads_synth/models/
+models/cds_synth/results/
+models/cds_synth/models/
+models/__pycache__/
+models/platalea/__pycache__/
+data/NewmanRatner/audio/ADS/
+data/NewmanRatner/audio/CDS/
+data/NewmanRatner/synthetic_speech/ADS/
+data/NewmanRatner/synthetic_speech/CDS/
+data/NewmanRatner/ADS_bert_features.pt
+data/Newmanratner/CDS_bert_features.pt

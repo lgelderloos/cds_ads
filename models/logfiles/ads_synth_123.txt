@@ -1,0 +1,2 @@
+Size train split: 19465
+Size val split: 1000

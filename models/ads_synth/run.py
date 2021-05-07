@@ -1,4 +1,5 @@
 import sys
+import os
 import torch
 import logging
 import platalea.basic as M
@@ -10,8 +11,9 @@ torch.manual_seed(seed)
 logging.basicConfig(level=logging.INFO)
 
 logging.info('Loading data')
-data = dict(train=D.NewmanRatner_loader(split='train', register="ADS_synth", batch_size=16, shuffle=True),
-            val=D.NewmanRatner_loader(split='val', register="ADS_synth", batch_size=16, shuffle=False))
+root = str(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))) + "/data/NewmanRatner/"
+data = dict(train=D.NewmanRatner_loader(split='train', register="ADS_synth", root=root, batch_size=16, shuffle=True),
+            val=D.NewmanRatner_loader(split='val', register="ADS_synth", root=root, batch_size=16, shuffle=False))
 
 config = dict(SpeechEncoder=dict(conv=dict(in_channels=39, out_channels=64, kernel_size=6, stride=2, padding=0, bias=False),
                                  rnn= dict(input_size=64, hidden_size=1024, num_layers=4, bidirectional=True, dropout=0),
@@ -24,4 +26,5 @@ net = M.SpeechImage(config)
 run_config = dict(max_lr=2 * 1e-4, epochs=50, seed=seed)
 
 logging.info('Training')
-M.experiment(net, data, run_config, folder="/roaming/u1270964/platalea/experiments/ads_synth/")
+folder = os.path.dirname(os.path.abspath(__file__))
+M.experiment(net, data, run_config, folder=folder)
