@@ -65,7 +65,7 @@ def load_register(register, root, synth, requested_split):
     metadata = {}
     for item in stored_metadata:
         metadata[(register + "_" + str(item))] = stored_metadata[item]
-    
+
     stored_splits = json.load(open(root + '{}_splits.json'.format(register)))
     splits = {}
     for split in stored_splits:
@@ -126,7 +126,7 @@ class NewmanRatnerData(torch.utils.data.Dataset):
                 self.splits["rest"] = set(splits["rest"])
             # produce list of tuples (identifier, text)
             # image and audio feature data
-            bert = torch.load(root + "{}/bert_features.pt".format(register))
+            bert = torch.load(root + "{}_bert_features.pt".format(register))
             self.image = dict(zip(bert["filenames"], bert["features"]))
             if self.synth:
                 audio = torch.load(root + "synthetic_speech/{}_mfcc_features.pt".format(register))
@@ -212,16 +212,17 @@ def collate_fn(data, max_frames=2048):
 
     return dict(image=images, audio=mfcc, text=chars, audio_len=mfcc_lengths, text_len=char_lengths)
 
-def NewmanRatner_loader(split="train", register="CDS", batch_size=32, shuffle=False, max_frames=2048):
-    return torch.utils.data.DataLoader(dataset=NewmanRatnerData(root='/roaming/u1270964/cds/data/NewmanRatner/', register=register, split=split),
+def NewmanRatner_loader(split="train", register="CDS", root="/data/NewmanRatner/", batch_size=32, shuffle=False, max_frames=2048):
+    return torch.utils.data.DataLoader(dataset=NewmanRatnerData(root=root, register=register, split=split),
                                        batch_size=batch_size,
                                        shuffle=shuffle,
                                        num_workers=0,
                                        collate_fn=lambda x: collate_fn(x, max_frames=max_frames))
-
+"""
 def flickr8k_loader(split='train', batch_size=32, shuffle=False, max_frames=2048):
     return torch.utils.data.DataLoader(dataset=Flickr8KData(root='/roaming/gchrupal/datasets/flickr8k/', split=split),
                                        batch_size=batch_size,
                                        shuffle=shuffle,
                                        num_workers=0,
                                        collate_fn=lambda x: collate_fn(x, max_frames=max_frames))
+"""

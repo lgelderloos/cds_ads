@@ -69,14 +69,14 @@ def experiment(net, data, config, folder):
     scheduler = cyclic_scheduler(optimizer, len(data['train']), max_lr = config['max_lr'], min_lr = 1e-6)
     optimizer.zero_grad()
 
-    with open("{}results/{}.json".format(folder, config['seed']), "w") as out:
+    with open("{}/results/{}.json".format(folder, config['seed']), "w") as out:
         # store random init model & scores. this is labelled epoch 0.
         net.eval()
         result = platalea.score.score(net, data['val'].dataset)
         result['epoch'] = 0
         print(result, file=out, flush=True)
-        logging.info("Saving model in {}models/net.{}.{}.pt".format(folder, config['seed'], 0))
-        torch.save(net, "{}models/net.{}.{}.pt".format(folder, config['seed'], 0))
+        logging.info("Saving model in {}/models/net.{}.{}.pt".format(folder, config['seed'], 0))
+        torch.save(net, "{}/models/net.{}.{}.pt".format(folder, config['seed'], 0))
 
         for epoch in range(1, config['epochs']+1):
             net.train()
@@ -97,8 +97,8 @@ def experiment(net, data, config, folder):
             result = platalea.score.score(net, data['val'].dataset)
             result['epoch'] = epoch
             print(result, file=out, flush=True)
-            logging.info("Saving model in {}models/net.{}.{}.pt".format(folder, config['seed'], epoch))
-            torch.save(net, "{}models/net.{}.{}.pt".format(folder, config['seed'], epoch))
+            logging.info("Saving model in {}/models/net.{}.{}.pt".format(folder, config['seed'], epoch))
+            torch.save(net, "{}/models/net.{}.{}.pt".format(folder, config['seed'], epoch))
 
 
 DEFAULT_CONFIG = dict(SpeechEncoder=dict(conv=dict(in_channels=39, out_channels=64, kernel_size=6, stride=2, padding=0, bias=False),

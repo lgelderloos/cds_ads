@@ -1,6 +1,6 @@
 import torch.nn as nn
 import platalea.introspect
-from attention import Attention
+from platalea.attention import Attention
 import logging
 
 # Includes code adapted from  https://github.com/gchrupala/speech2image/blob/master/PyTorch/functions/encoders.py
