@@ -19,7 +19,7 @@ The Google cloud API for generating synthetic speech
 ### NewmanRatner
 The data used is from the [NewmanRatner corpus](https://childes.talkbank.org/access/Eng-NA/NewmanRatner.html) which is available through Childes. Please download both the audio and transcripts and place them into data/NewmanRatner. Then run data/preprocess_newmanratner.py which will store each utterance by the mothers as a separate .wav, and produce ADS.json and CDS.json that link the wav-files to their transcription.
 
-A splitting script is provided in the /data directory, make_even_split.py. It produces ADS_splits.json and CDS_splits.json. The splitting script includes those utterances in included.json. This excludes a small proportion of data for which speech synthesis failed. If you wish to recreate the experiments in the paper exactly, the splits we used are provided as ADS_splits.json and CDS_splits.json under /data.
+A splitting script is provided in the /data directory, make_even_split.py. It produces ADS_splits.json and CDS_splits.json. The splitting script includes those utterances in included.json. This excludes a small proportion of data for which speech synthesis failed. If you wish to recreate the experiments in the paper exactly, the splits we used are provided as ADS_splits.json and CDS_splits.json under /data/NewmanRatner.
 
 ### Synthetic speech
 
