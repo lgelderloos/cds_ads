@@ -1,7 +1,7 @@
 import torch
 import platalea.score as S
 import platalea.rank_eval as E
-import platalea.dataset_with_joined_split as D
+import platalea as D
 import numpy as np
 import os
 import json
@@ -36,10 +36,12 @@ def multi_cross_test(dataset, variants, seeds):
         for seed in seeds:
             scores[variant][seed] = cross_test(dataset, variant, seed)
     return scores
-        
+
 variants = ["ADS_synth", "CDS_synth"]
 seeds = ['123', '234', '345']
 
-data = D.NewmanRatner_loader(split='test', register="joined_synth", batch_size=16, shuffle=False)
+root = str(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) + "/data/NewmanRatner/"
+
+data = D.NewmanRatner_loader(split='test', register="joined_synth", root=root, batch_size=16, shuffle=False)
 scores = multi_cross_test(data, variants, seeds)
 json.dump(scores, open("joinedtest_results/syntheticspeech.json","w"))
