@@ -29,14 +29,16 @@ def multi_cross_test(dataset, variants, seeds):
             scores[variant][seed] = cross_test(dataset, variant, seed)
             print("Done testing seed {}".format(seed), flush = True)
     return scores
-        
+
 variants = ["ADS_synth", "CDS_synth"]
 seeds = ["123", "234", "345"]
+
+root = str(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) + "/data/NewmanRatner/"
 
 # for each of the valsets
 for variant in variants:
     print("Testing on {}".format(variant), flush = True)
     # make a data loader
-    data = D.NewmanRatner_loader(split='val', register=variant, batch_size=16, shuffle=False)
+    data = D.NewmanRatner_loader(split='val', register=variant, root=root, batch_size=16, shuffle=False)
     scores = multi_cross_test(data, variants, seeds)
     json.dump(scores, open("crossval_results/{}.json".format(variant),"w"))
