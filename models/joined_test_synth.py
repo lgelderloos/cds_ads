@@ -1,7 +1,7 @@
 import torch
 import platalea.score as S
 import platalea.rank_eval as E
-import platalea as D
+import platalea.dataset as D
 import numpy as np
 import os
 import json

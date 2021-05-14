@@ -73,7 +73,7 @@ def load_register(register, root, synth, requested_split):
         for item in stored_splits[split]:
             items.append(register + "_" + item)
         splits[split] = set(items)
-    bert = torch.load(root + "{}/bert_features.pt".format(register))
+    bert = torch.load(root + "{}_bert_features.pt".format(register))
     bert_filenames = [(register + "_" + name) for name in bert["filenames"]]
     image = dict(zip(bert_filenames, bert["features"]))
     if synth:
