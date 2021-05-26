@@ -2,7 +2,6 @@ import torch
 import torchvision.models as models
 import torchvision.transforms as transforms
 import torch.nn as nn
-import PIL.Image
 import json
 import logging
 from scipy.io.wavfile import read
@@ -10,12 +9,7 @@ import os
 import numpy
 
 def prepare_features(dataset, semantic_features):
-    if dataset == "flickr8k" and semantic_features == "visual":
-        flickr8k_features()
-    elif dataset == "flickr8k" and semantic_features == "sbert":
-        #this is temporary, TODO
-        raise NotImplementedError()
-    elif (dataset == "ADS" or dataset == "CDS") and semantic_features == "sbert":
+    if (dataset == "ADS" or dataset == "CDS") and semantic_features == "sbert":
         newmanratner_features("sbert", dataset)
     else:
         raise ValueError("Unknown combination of dataset and features ({}, {})".format(dataset, semantic_features))
@@ -42,72 +36,6 @@ def newman_audio_features(config):
     paths = [ directory + file for file in files ]
     files, features = audio_features(paths, config)
     torch.save(dict(features=features, filenames=files), config['dir'] + '{}_mfcc_features.pt'.format(config['dataset']))
-"""
-def flickr8k_features():
-    config = dict(audio=dict(dir='/roaming/gchrupal/datasets/flickr8k/', type='mfcc', delta=True, alpha=0.97, n_filters=40, window_size=0.025, frame_shift=0.010),
-                  image=dict(dir='/roaming/gchrupal/datasets/flickr8k/', model='resnet'))
-    flickr8k_audio_features(config['audio'])
-    flickr8k_image_features(config['image'])
-
-def flickr8k_audio_features(config):
-    directory = config['dir'] + 'flickr_audio/wavs/'
-    files = [ line.split()[0] for line in open(config['dir'] + 'wav2capt.txt') ]
-    paths = [ directory + file for file in files ]
-    features = audio_features(paths, config)
-    torch.save(dict(features=features, filenames=files), config['dir'] + 'mfcc_features.pt')
-
-
-def flickr8k_image_features(config):
-    directory = config['dir'] + 'Flickr8k_Dataset/Flicker8k_Dataset/'
-    data = json.load(open(config['dir'] + 'dataset.json'))
-    files =  [ image['filename'] for image in data['images'] ]
-    paths = [ directory + file for file in files ]
-
-    features = image_features(paths, config).cpu()
-    torch.save(dict(features=features, filenames=files), config['dir'] + 'resnet_features.pt')
-
-
-def image_features(paths, config):
-    if config['model'] == 'resnet':
-        model = models.resnet152(pretrained = True)
-        model = nn.Sequential(*list(model.children())[:-1])
-    elif config['model'] == 'vgg19':
-        model = models.vgg19_bn(pretrained = True)
-        model.classifier = nn.Sequential(*list(model.classifier.children())[:-1])
-    if torch.cuda.is_available():
-        model.cuda()
-    for p in model.parameters():
-    	p.requires_grad = False
-    model.eval()
-    device = list(model.parameters())[0].device
-    def one(path):
-        logging.info("Extracting features from {}".format(path))
-        im = PIL.Image.open(path)
-        return prep_tencrop(im, model, device)
-
-    return torch.stack([one(path) for path in paths])
-
-def prep_tencrop(im, model, device):
-    # Adapted from: https://github.com/gchrupala/speech2image/blob/master/preprocessing/visual_features.py#L60
-
-    # some functions such as taking the ten crop (four corners, center and horizontal flip) normalise and resize.
-    tencrop = transforms.TenCrop(224)
-    tens = transforms.ToTensor()
-    normalise = transforms.Normalize(mean = [0.485,0.456,0.406],
-                                     std = [0.229, 0.224, 0.225])
-    resize = transforms.Resize(256, PIL.Image.ANTIALIAS)
-
-    im = tencrop(resize(im))
-    im = torch.cat([normalise(tens(x)).unsqueeze(0) for x in im])
-    im = im.to(device)
-    # there are some grayscale images in mscoco that the vgg and resnet networks
-    # wont take
-    if not im.size()[1] == 3:
-        im = im.expand(im.size()[0], 3, im.size()[2], im.size()[3])
-    activations = model(im)
-    return activations.mean(0).squeeze()
-
-"""
 
 def fix_wav(path):
     import wave
@@ -140,7 +68,7 @@ def clean_sentence(sentence):
         else:
             clean_sentence.append(word)
     # return as string rather than as wordlist
-    return " ".join(clean_sentence) # FIXMEthis should not be an underscore ##fixed
+    return " ".join(clean_sentence)
 
 def bert_features(dataset, config):
     if config["version"] == "sbert":
@@ -171,7 +99,6 @@ def audio_features(paths, config):
     files = []
     n = 0
     t = len(paths)
-
 
     # only extracting mfccs for files for which you don't have them yet
     #existing_mfccs = torch.load(config['dir'] + '{}_mfcc_features.pt'.format(config['dataset']))
